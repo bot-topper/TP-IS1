@@ -1,7 +1,8 @@
 INTEGRANTES  
+#Integrante 1  
+Alejo Rossaroli Audisio - 47.666.714 - t1Alejo  
 #Integrante 4  
 Gonzalo Mateo Garcia - 43.606.495 - MG4rc1a  
-
 # TP-IS1
 Justificacion de uso de patrones  
 **Abstract Factory**  

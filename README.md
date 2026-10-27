@@ -5,6 +5,8 @@ Alejo Rossaroli Audisio - 47.666.714 - t1Alejo
 Florencia Tosolini Paez - 46.887.645 - QC-fl0r1  
 #Integrante 4  
 Gonzalo Mateo Garcia - 43.606.495 - MG4rc1a  
+#Integrante 5
+Santino Gatti Raggi - 47.988.332 - GoblinCrimes
 # TP-IS1
 Justificacion de uso de patrones  
 **Abstract Factory**  

@@ -3,6 +3,8 @@ INTEGRANTES
 Alejo Rossaroli Audisio - 47.666.714 - t1Alejo  
 #Integrante 2  
 Florencia Tosolini Paez - 46.887.645 - QC-fl0r1  
+#integrante 3
+Jorge Gabriel Zamudio villarroel - 47570596 - bot-topper 
 #Integrante 4  
 Gonzalo Mateo Garcia - 43.606.495 - MG4rc1a  
 #Integrante 5

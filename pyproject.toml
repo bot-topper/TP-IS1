@@ -1,0 +1,28 @@
+[project]
+name = "tp-is1"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "bot-topper", email = "bs477227@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.20.1",
+    "flask>=3.1.3",
+    "flask-sqlalchemy>=3.1.1",
+    "sqlalchemy>=2.1.6",
+]
+
+[project.scripts]
+tp-is1 = "tp_is1:main"
+
+[build-system]
+requires = ["uv_build>=0.13.6,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "ruff>=0.17.3",
+]

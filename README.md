@@ -9,7 +9,7 @@
 
 ## Descripción
 
-Plataforma web de preguntas y respuestas (**Q&A**), desarrollada en el contexto del Taller de la asignatura **Ingeniería de Software I** (UNRC)[cite: 1, 3, 6].
+Plataforma web de preguntas y respuestas (**Q&A**), desarrollada en el contexto del Taller de la asignatura **Ingeniería de Software I** (UNRC)
 
 El sistema permite a los usuarios publicar consultas organizadas por categorías y etiquetas (`#tags`), responder, comentar, votar aportes según su reputación y aceptar soluciones[cite: 1]. Como diferencial principal, integra **Agentes de IA (`AgentIA`)** que actúa como un autor más dentro del foro, capaz de asistir de forma automatizada mediante distintos proveedores de modelos de lenguaje (OpenAI, Gemini o modelos locales).
 

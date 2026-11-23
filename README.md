@@ -29,10 +29,10 @@ El sistema permite a los usuarios publicar consultas organizadas por categorías
 ## Diagrama UML
 
 **Version 1**
-![Diagrama de Clases UML](diagrama-UML.jpg)
+![Diagrama de Clases UML](diagrama-UML-1.jpg)
 
 **Version 2**
-![Diagrama de Clases UML]()
+![Diagrama de Clases UML](diagrama-UML-2.png)
 
 ---
 

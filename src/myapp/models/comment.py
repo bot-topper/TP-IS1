@@ -24,13 +24,13 @@ class Comment(db.Model):
 
     def __init__(self, body: str, user, post):
         if user is None : 
-            raise ValueError("El voto debe provenir de un User")
+            raise ValueError("El Comment debe provenir de un User valido.")
         
         if post is None :
-            raise ValueError("El voto debe ir a un Post")
+            raise ValueError("El Comment debe ir a un Post valido.")
 
         if(body is None or body.strip() == "" or len(body.strip()) > 300):
-            raise ValueError("El contenido del Post no puede ser nulo, vacio ni superar el máximo de 300 caracteres.")
+            raise ValueError("El contenido del Comment no puede ser nulo, vacio ni superar el máximo de 300 caracteres.")
     
         super().__init__()
 

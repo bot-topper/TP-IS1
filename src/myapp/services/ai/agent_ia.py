@@ -5,6 +5,7 @@ from typing import Protocol
 
 from myapp.models.user import IAuthor
 
+
 class _AnswerIAStrategy(Protocol):
     """Contrato de Strategy"""
 
@@ -21,18 +22,18 @@ class _QuestionLike(Protocol):
 class AgentIA(IAuthor):
     """Agente de IA como autor válido."""
 
-    def __init__(self, agentName: String, strategy_ia: _AnswerIAStrategy):
+    def __init__(self, agentName: str, strategy_ia: _AnswerIAStrategy):
         if not agentName or not agentName.strip():
             raise ValueError("El nombre del agente no puede estar vacío.")
         if strategy_ia is None:
             raise ValueError("AgentIA requiere una estrategia AnswerIA activa.")
 
-        self.agentName = agentName.strip()
+        self._agentName = agentName.strip()
         self.strategyIA = strategy_ia
 
     def getName(self) -> str:
         """Retorna el nombre identificador del agente IA (contrato IAutor)."""
-        return self.agentName
+        return self._agentName
 
     def readQuestion(self, question: _QuestionLike) -> str:
         """Extrae el título y cuerpo de la pregunta como contexto legible."""

@@ -14,6 +14,8 @@ class IAuthor:
 
 
 class User(db.Model):
+    __abstract__ = True
+    
     id = db.Column(db.Integer, primary_key=True)
     passwordHash = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
@@ -21,20 +23,20 @@ class User(db.Model):
 
     @staticmethod
     def validate_user_fields(mapper, connection, target) -> None:
-        if not target._email or not EMAIL_RE.match(target._email.strip()):
+        if not target.email or not EMAIL_RE.match(target.email.strip()):
             raise ValueError("El email no es válido")
-        target._email = target._email.strip().lower()
+        target.email = target.email.strip().lower()
 
-        if not target._passwordHash:
+        if not target.passwordHash:
             raise ValueError("La contraseña no puede estar vacía")
-        if not target._passwordHash.startswith(("scrypt:", "pbkdf2:")):
-            target._passwordHash = generate_password_hash(target._passwordHash)
+        if not target.passwordHash.startswith(("scrypt:", "pbkdf2:")):
+            target.passwordHash = generate_password_hash(target.passwordHash)
 
     def getName(self) -> str:
-        return self._email
+        return self.email
 
     def updateReputation(self, points: int) -> None:
-        self._reputation += points
+        self.reputation += points
 
 
 event.listen(User, "before_insert", User.validate_user_fields, propagate=True)

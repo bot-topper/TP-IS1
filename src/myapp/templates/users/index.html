@@ -6,7 +6,7 @@
   {% for user in users %}
     <li>
       <a href="{{ url_for('users.detail', user_id=user.id) }}">
-        {{ user.name }}
+        {{ user.getName() }}
       </a> — {{ user.email }}
     </li>
   {% else %}

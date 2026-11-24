@@ -41,3 +41,19 @@ class User(db.Model):
 
 event.listen(User, "before_insert", User.validate_user_fields, propagate=True)
 event.listen(User, "before_update", User.validate_user_fields, propagate=True)
+
+class NormalUser(User):
+    __tablename__ = "normaluser"
+
+    def canDownVote() -> bool:
+        return self.reputation >= 50
+
+    def canCreateTags() -> bool:
+        return self.reputation >= 100
+
+class AdminUser(User):
+    __tablename__ = "adminuser"
+
+#Sacar las comillas cuando ModerationCommand este implementado
+    def executeModeration(self, cmd: "ModerationCommand") -> None:
+        raise NotImplementedError("Falta la creacion de la clase ModerationCommand")

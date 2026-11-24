@@ -32,13 +32,13 @@ class Post(db.Model):
     # - cascade="all, delete-orphan": implementa la composición del UML; si se elimina
     #   el Post o se quita un voto de `self.votes`, se elimina automáticamente de la BD.
     # - lazy=True: carga los votos desde la BD recién cuando se accede a `post.votes`.
-    votes : Mapped[list["Vote"]] = relationship("Vote", backref = "post", cascade = "all, delete-orphans", lazy = True)
+    votes : Mapped[list["Vote"]] = relationship("Vote", backref = "post", cascade = "all, delete-orphan", lazy = True)
 
     def __init__(self, body: str, author_type: str, author_id: int | None = None, **kwargs):
         if (type(self) == Post):
             raise TypeError("Post es una clase abstracta y no puede instanciarse directamente.")
         
-        if(author_type == None ):
+        if(author_type == None or author_type.strip() == ""):
             raise ValueError("El Post debe tener un autor obligatorio.")
 
         if(body == None or body.strip() == ""):
@@ -53,9 +53,9 @@ class Post(db.Model):
     def calculateScore(self) -> int:
         raise NotImplementedError("Las subclases deben implementar calculateScore().")
 
-    #funcion para buscar si un usuario ya votó
-    def voter(self, user, value: int):
-        if user == None:
+    #funcion para votar y se decide que hacer si el usuario ya votó
+    def vote(self, user, value: int):
+        if user is None:
             raise ValueError("El usuario debe existir.")
 
         if value !=1 and value !=-1:
@@ -64,6 +64,17 @@ class Post(db.Model):
         #buscar entre la lista de votos
         existing_vote = None
         for v in self.votes:
+            #compara las instancias de python || objetos ya persistentes en la bdd.
             if v.user == user or (v.user_id is not None and v.user_id == user.id):
                 existing_vote = v
                 break
+
+        #si no exite un voto
+        if existing_vote is None:
+            v = Vote(value, user, self)
+        #si ya hay un voto, y tiene el mismo valor entonces está quitando el voto
+        elif existing_vote.value == value:
+            self.votes.remove(existing_vote)
+        #si ya hay un voto pero tiene el valor opuesto, hay que modificarlo
+        else:
+            existing_vote.value = value

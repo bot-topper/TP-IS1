@@ -14,29 +14,9 @@ class IAuthor:
 
 
 class User(db.Model):
-    __abstract__ = True
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(255), nullable=False, unique=True)
 
-    _id = db.Column(db.Integer, primary_key=True)
-    _passwordHash = db.Column(db.String(255), nullable=False)
-    _email = db.Column(db.String(255), nullable=False, unique=True)
-    _reputation = db.Column(db.Integer, nullable=False, default=0)
-
-    def validate_user_fields(mapper, connection, target) -> None:
-        if not target._email or not EMAIL_RE.match(target._email.strip()):
-            raise ValueError("El email no es válido")
-        target._email = target._email.strip().lower()
-
-        if not target._passwordHash:
-            raise ValueError("La contraseña no puede estar vacía")
-        if not target._passwordHash.startswith(("scrypt:", "pbkdf2:")):
-            target._passwordHash = generate_password_hash(target._passwordHash)
-
-    def getName(self) -> str:
-        return self._email
-
-    def updateReputation(self, points: int) -> None:
-        self._reputation += points
-
-
-event.listen(User, "before_insert", User.validate_user_fields, propagate=True)
-event.listen(User, "before_update", User.validate_user_fields, propagate=True)
+    def __repr__(self):
+        return f"<User {self.email}>"

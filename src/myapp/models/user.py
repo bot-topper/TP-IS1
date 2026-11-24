@@ -15,14 +15,6 @@ class IAuthor:
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    email = db.Column(db.String(255), nullable=False, unique=True)
-
-<<<<<<< HEAD
-    def __repr__(self):
-        return f"<User {self.email}>"
-=======
-    id = db.Column(db.Integer, primary_key=True)
     passwordHash = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
     reputation = db.Column(db.Integer, nullable=False, default=0)
@@ -47,4 +39,3 @@ class User(db.Model):
 
 event.listen(User, "before_insert", User.validate_user_fields, propagate=True)
 event.listen(User, "before_update", User.validate_user_fields, propagate=True)
->>>>>>> 026197e (Fix de la Issue (#19))

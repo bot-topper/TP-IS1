@@ -4,6 +4,7 @@ from myapp.extensions import db
 from sqlalchemy.orm import Mapped, relationship
 
 from myapp.models.vote import Vote
+from myapp.models.comment import Comment
 
 class Post(db.Model):
 
@@ -33,6 +34,9 @@ class Post(db.Model):
     #   el Post o se quita un voto de `self.votes`, se elimina automáticamente de la BD.
     # - lazy=True: carga los votos desde la BD recién cuando se accede a `post.votes`.
     votes : Mapped[list["Vote"]] = relationship("Vote", backref = "post", cascade = "all, delete-orphan", lazy = True)
+
+    #relacion entre Post y Comment
+    comments : Mapped[list["Comment"]] = relationship("Comment", backref = "post", cascade = "all, delete-orphan", lazy = True)
 
     def __init__(self, body: str, author_type: str, author_id: int | None = None, **kwargs):
         if (type(self) == Post):

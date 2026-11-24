@@ -17,7 +17,12 @@ def index():
 
 @users_bp.get("/<int:user_id>")
 def detail(user_id):
-    user = db.session.get(User, user_id)
+    user = None
+    for subcls in User.__subclasses__():
+        if not getattr(subcls, "__abstract__", False):
+            user = db.session.get(subcls, user_id)
+            if user is not None:
+                break
     if user is None:
         abort(404)
     return render_template("users/detail.html", user=user)

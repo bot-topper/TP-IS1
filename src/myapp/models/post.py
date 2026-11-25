@@ -1,5 +1,4 @@
 from datetime import datetime, timezone
-from sqlalchemy.orm import Mapped
 from myapp.extensions import db
 from sqlalchemy.orm import Mapped, relationship
 
@@ -37,6 +36,13 @@ class Post(db.Model):
 
     #relacion entre Post y Comment
     comments : Mapped[list["Comment"]] = relationship("Comment", backref = "post", cascade = "all, delete-orphan", lazy = True)
+
+    #diccionario, manual de sqlAlquemi para que sepa traducir la herencia de Python a tablas de 
+    #una bdd relacional
+    __mapper_args__ = {
+        "polymorphic_identity": "post", #define cual es el valor de texto que identifica a la clase Post
+        "polymorphic_on": type, #indica cual es la columna discriminadora de post
+    }
 
     def __init__(self, body: str, author_type: str, author_id: int | None = None, **kwargs):
         if (type(self) == Post):

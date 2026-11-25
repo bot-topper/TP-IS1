@@ -1,4 +1,5 @@
 import re
+from typing import Protocol
 
 from sqlalchemy import event
 from werkzeug.security import generate_password_hash
@@ -42,18 +43,24 @@ class User(db.Model):
 event.listen(User, "before_insert", User.validate_user_fields, propagate=True)
 event.listen(User, "before_update", User.validate_user_fields, propagate=True)
 
+class _ModerationCommandLike(Protocol):
+    def execute(self) -> None: ...
+
+
 class NormalUser(User):
     __tablename__ = "normaluser"
 
-    def canDownVote() -> bool:
-        return self.reputation >= 50
+    def canDownvote(self) -> bool:
+        return (self.reputation or 0) >= 50
 
-    def canCreateTags() -> bool:
-        return self.reputation >= 100
+    def canCreateTags(self) -> bool:
+        return (self.reputation or 0) >= 100
+
 
 class AdminUser(User):
     __tablename__ = "adminuser"
 
-#Sacar las comillas cuando ModerationCommand este implementado
-    def executeModeration(self, cmd: "ModerationCommand") -> None:
-        raise NotImplementedError("Falta la creacion de la clase ModerationCommand")
+    def executeModeration(self, cmd: _ModerationCommandLike) -> None:
+        if cmd is None or not callable(getattr(cmd, "execute", None)):
+            raise ValueError("Se requiere un ModerationCommand válido.")
+        cmd.execute()

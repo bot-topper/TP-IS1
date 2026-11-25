@@ -2,11 +2,11 @@
 """
 
 import pytest
-from myapp.services.moderation.commands import CloseQuestionCommand
 
 from myapp.extensions import db
 from myapp.models.moderation_log import ModerationLog
 from myapp.models.user import AdminUser, NormalUser
+from myapp.services.moderation.commands import CloseQuestionCommand
 
 
 class _FakeQuestion:

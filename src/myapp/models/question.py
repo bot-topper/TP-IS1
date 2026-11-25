@@ -51,15 +51,6 @@ class Question(Post):
         lazy=True,
     )
 
-    # Asociacion obligatoria: 1 Question -> muchas Answer
-    answers = db.relationship(
-        "Answer", #lista de objetos de tipo Answer
-        backref = "question", #crea el atributo .question dentro de Answer
-        foreign_keys = "Answer.question_id", #sqlAlchemy va a saber por donde unir
-        cascade="all, delete-orphan",
-        lazy = True
-    )
-
     # Asociación muchos a muchos (0..* a 0..*) con Tag
     tags = db.relationship(
         "Tag",

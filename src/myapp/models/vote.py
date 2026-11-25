@@ -40,5 +40,5 @@ class Vote(db.Model):
         super().__init__()
 
         self.value = value
-        self.post = post
         self.user = user
+        post.votes.append(self)

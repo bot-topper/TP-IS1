@@ -76,6 +76,7 @@ class Post(db.Model):
         self.body = body
         self.author_type = resolved_type
         self.author_id = resolved_id
+        self.isHidden = bool(kwargs.get("isHidden", False))
         self._author = author
 
     @property

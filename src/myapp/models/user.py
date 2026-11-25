@@ -2,7 +2,6 @@ import re
 from typing import Protocol
 
 from sqlalchemy import event
-from sqlalchemy.orm import Mapped, relationship
 from werkzeug.security import generate_password_hash
 
 from myapp.extensions import db
@@ -71,9 +70,14 @@ class AdminUser(User):
         
         # ejecutar el primero
         cmd.execute()
+        from sqlalchemy.orm import object_session
 
         from myapp.models.moderation_log import ModerationLog
 
         action_name = getattr(cmd, "actionName", type(cmd).__name__)
         log_reason = reason or getattr(cmd, "reason", "Acción de moderación")
-        ModerationLog(actionName=action_name, reason=log_reason, admin=self)
+        log = ModerationLog(actionName=action_name, reason=log_reason, admin=self)
+
+        session = object_session(self)
+        if session is not None:
+            session.add(log)

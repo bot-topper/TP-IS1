@@ -1,12 +1,13 @@
 """Pruebas unitarias para PostCreatorAbs"""
 
+from typing import ClassVar
+
 import pytest
 
 from myapp.models.post import Post
-from myapp.services.factory.PostCreatorAbs import PostCreatorAbs
+from myapp.services.factory.post_creator_abs import PostCreatorAbs
 
 
-from typing import ClassVar
 class _DummyPost(Post):
     __mapper_args__: ClassVar[dict[str, str]] = {
         "polymorphic_identity": "dummy_creator_post"

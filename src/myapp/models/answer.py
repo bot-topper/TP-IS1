@@ -60,7 +60,7 @@ class Answer(Post):
         )
 
         #llena automaticamente el tributo question_id
-        self.question = question
+        question.answers.append(self)
         self.acceptedAnswer = False
         self.isAIGenerated = isAIGenerated
         self.modelUsed = modelUsed.strip() if isinstance(modelUsed, str) and modelUsed.strip() else None

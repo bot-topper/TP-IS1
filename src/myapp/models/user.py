@@ -1,4 +1,5 @@
 import re
+from typing import Protocol
 
 from sqlalchemy import event
 from werkzeug.security import generate_password_hash
@@ -41,3 +42,25 @@ class User(db.Model):
 
 event.listen(User, "before_insert", User.validate_user_fields, propagate=True)
 event.listen(User, "before_update", User.validate_user_fields, propagate=True)
+
+class _ModerationCommandLike(Protocol):
+    def execute(self) -> None: ...
+
+
+class NormalUser(User):
+    __tablename__ = "normaluser"
+
+    def canDownvote(self) -> bool:
+        return (self.reputation or 0) >= 50
+
+    def canCreateTags(self) -> bool:
+        return (self.reputation or 0) >= 100
+
+
+class AdminUser(User):
+    __tablename__ = "adminuser"
+
+    def executeModeration(self, cmd: _ModerationCommandLike) -> None:
+        if cmd is None or not callable(getattr(cmd, "execute", None)):
+            raise ValueError("Se requiere un ModerationCommand válido.")
+        cmd.execute()

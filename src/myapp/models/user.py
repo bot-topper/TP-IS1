@@ -60,7 +60,24 @@ class NormalUser(User):
 class AdminUser(User):
     __tablename__ = "adminuser"
 
-    def executeModeration(self, cmd: _ModerationCommandLike) -> None:
+    def executeModeration(self,
+                          cmd: _ModerationCommandLike,
+                          reason: str | None = None,
+                          ) -> None:
+        
         if cmd is None or not callable(getattr(cmd, "execute", None)):
             raise ValueError("Se requiere un ModerationCommand válido.")
+        
+        # ejecutar el primero
         cmd.execute()
+        from sqlalchemy.orm import object_session
+
+        from myapp.models.moderation_log import ModerationLog
+
+        action_name = getattr(cmd, "actionName", type(cmd).__name__)
+        log_reason = reason or getattr(cmd, "reason", "Acción de moderación")
+        log = ModerationLog(actionName=action_name, reason=log_reason, admin=self)
+
+        session = object_session(self)
+        if session is not None:
+            session.add(log)

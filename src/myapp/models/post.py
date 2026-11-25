@@ -33,21 +33,15 @@ class Post(db.Model):
 
     isHidden = db.Column(db.Boolean, nullable = False, default = False)
 
-    # Relación de composición (1 a 0..*) entre Post y Vote:
-    # - backref="post": crea automáticamente el atributo .post en la clase Vote,
-    #   permitiendo asignar `self.post = post` al crear un voto y sincronizar `post_id`.
-    # - cascade="all, delete-orphan": implementa la composición del UML; si se elimina
-    #   el Post o se quita un voto de `self.votes`, se elimina automáticamente de la BD.
-    # - lazy=True: carga los votos desde la BD recién cuando se accede a `post.votes`.
-
+    #Relacion de composicion (1 a 0..*) entre Post y Vote
     votes: Mapped[list["Vote"]] = relationship(
         "Vote",
-        backref="post",
-        cascade="all, delete-orphan",
-        lazy=True,
+        backref="post", #crea automáticamente el atributo .post en la clase Vote
+        cascade="all, delete-orphan", #si se elimina el Post o se quita un voto de `self.votes`, se elimina automáticamente de la BD
+        lazy=True, #carga los votos desde la BD recién cuando se accede a `post.votes`.
     )
 
-    # Relación de composición (1 a 0..*) entre Post y Comment
+    #Relacion de composicion (1 a 0..*) entre Post y Comment
     comments: Mapped[list["Comment"]] = relationship(
         "Comment",
         backref="post",

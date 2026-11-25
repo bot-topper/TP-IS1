@@ -1,6 +1,4 @@
 """Pruebas unitarias para ModerationLog y auditoría en AdminUser
-
-Colocar en: tests/
 """
 
 import pytest

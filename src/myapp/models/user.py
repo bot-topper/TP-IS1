@@ -10,7 +10,7 @@ EMAIL_RE = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
 
 
 # Interfaz
-class IAuthor:
+class IAuthor(Protocol):
     def getName(self) -> str: ...
 
 

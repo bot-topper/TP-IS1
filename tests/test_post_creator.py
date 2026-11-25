@@ -1,9 +1,9 @@
 """Pruebas unitarias para PostCreatorAbs"""
 
 import pytest
-from myapp.services.factory.post_creator import PostCreatorAbs
 
 from myapp.models.post import Post
+from myapp.services.factory.post_creator import PostCreatorAbs
 
 
 class _DummyPost(Post):

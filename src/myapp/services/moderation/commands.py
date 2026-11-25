@@ -1,8 +1,4 @@
-"""Interfaz ModerationCommand y comandos concretos (Sub-issue 6.1).
-
-Destino en el proyecto: src/myapp/services/moderation/commands.py
-(Crear __init__.py vacio en esa carpeta)
-"""
+"""Interfaz ModerationCommand y comandos concretos"""
 
 from __future__ import annotations
 

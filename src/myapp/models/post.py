@@ -4,6 +4,7 @@ from typing import ClassVar
 from sqlalchemy.orm import Mapped, relationship
 
 from myapp.extensions import db
+from myapp.models.comment import Comment
 from myapp.models.vote import Vote
 
 
@@ -41,6 +42,14 @@ class Post(db.Model):
 
     votes: Mapped[list["Vote"]] = relationship(
         "Vote",
+        backref="post",
+        cascade="all, delete-orphan",
+        lazy=True,
+    )
+
+    # Relación de composición (1 a 0..*) entre Post y Comment
+    comments: Mapped[list["Comment"]] = relationship(
+        "Comment",
         backref="post",
         cascade="all, delete-orphan",
         lazy=True,

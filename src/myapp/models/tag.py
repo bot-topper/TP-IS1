@@ -1,5 +1,6 @@
 from myapp.extensions import db
 
+
 class Tag(db.Model):
     __tablename__ = "tag"
 

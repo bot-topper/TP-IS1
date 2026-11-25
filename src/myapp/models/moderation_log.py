@@ -1,19 +1,3 @@
-"""Entidad ModerationLog para auditoria de acciones de AdminUser
-
-Colocar en: src/myapp/models/
-
-Nota - Cambiar (adaptar) metodo (al final del archivo)
-en la clase AdminUser en src/myapp/models/user.py:
-    def executeModeration(self, cmd: _ModerationCommandLike, reason: str | None = None):
-        if cmd is None or not callable(getattr(cmd, "execute", None)):
-            raise ValueError("Se requiere un ModerationCommand válido.")
-        cmd.execute()
-        from myapp.models.moderation_log import ModerationLog
-        action_name = getattr(cmd, "actionName", type(cmd).__name__)
-        log_reason = reason or getattr(cmd, "reason", "Acción de moderación")
-        ModerationLog(actionName=action_name, reason=log_reason, admin=self)
-"""
-
 from datetime import UTC, datetime
 
 from sqlalchemy import ForeignKey

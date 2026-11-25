@@ -21,7 +21,11 @@ class Answer(Post):
 
     #Clave foranea de Question
     question_id = db.Column(db.Integer, ForeignKey("question.id"), nullable = False)
-
+    question = db.relationship(
+        "Question",
+        backref=db.backref("answers", cascade="all, delete-orphan", lazy=True),
+        lazy=True,
+    )
 
     def __init__(self,
                  body: str,

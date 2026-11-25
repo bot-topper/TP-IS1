@@ -4,9 +4,9 @@ Colocar en: tests/test_notification.py
 """
 
 import pytest
-from myapp.models.notification import Notification
 
 from myapp.extensions import db
+from myapp.models.notification import Notification
 from myapp.models.user import AdminUser, NormalUser
 
 

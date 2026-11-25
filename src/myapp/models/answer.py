@@ -23,6 +23,7 @@ class Answer(Post):
     question_id = db.Column(db.Integer, ForeignKey("question.id"), nullable = False)
     question = db.relationship(
         "Question",
+        foreign_keys=[question_id],
         backref=db.backref("answers", cascade="all, delete-orphan", lazy=True),
         lazy=True,
     )

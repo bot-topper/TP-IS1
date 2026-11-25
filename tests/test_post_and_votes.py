@@ -1,4 +1,4 @@
-"""Pruebas unitarias para Post y Vote"""
+"""Pruebas unitarias para Post y Vote (Issue #22)."""
 
 from typing import ClassVar
 
@@ -6,7 +6,7 @@ import pytest
 
 from myapp.extensions import db
 from myapp.models.post import Post
-from myapp.models.user import User
+from myapp.models.user import AdminUser, NormalUser
 from myapp.models.vote import Vote
 
 
@@ -58,7 +58,7 @@ def test_post_asocia_autor_y_declara_calculate_score_abstracto() -> None:
 def test_vote_valida_argumentos() -> None:
     author = _DummyAuthor()
     post = _DummyPost(body="Post", author=author)
-    user = User(name="Ana", email="ana@unrc.edu.ar")
+    user = NormalUser(email="ana@unrc.edu.ar", passwordHash="secret123")
 
     with pytest.raises(ValueError, match="User"):
         Vote(value=1, user=None, post=post)
@@ -71,34 +71,37 @@ def test_vote_valida_argumentos() -> None:
 
 
 def test_post_vote_crea_modifica_y_revierte_voto_en_bd(app) -> None:
-    user = User(name="Juan", email="juan@unrc.edu.ar")
-    db.session.add(user)
+    student = NormalUser(email="juan@unrc.edu.ar", passwordHash="secret123")
+    admin = AdminUser(email="admin@unrc.edu.ar", passwordHash="secret456")
+    db.session.add_all([student, admin])
     db.session.flush()
 
-    post = _DummyPost(
-        body="¿Cómo funciona Strategy?",
-        author_type="User",
-        author_id=user.id,
-    )
+    post = _DummyPost(body="¿Cómo funciona Strategy?", author=student)
     db.session.add(post)
     db.session.commit()
 
     # 1. Voto positivo inicial
-    post.vote(user, 1)
+    post.vote(student, 1)
     db.session.commit()
     assert len(post.votes) == 1
     assert post.votes[0].value == 1
     assert post.calculateScore() == 1
 
     # 2. Cambio de voto (+1 -> -1) sin duplicar registro
-    post.vote(user, -1)
+    post.vote(student, -1)
     db.session.commit()
     assert len(post.votes) == 1
     assert post.votes[0].value == -1
     assert post.calculateScore() == -1
 
-    # 3. Repetir mismo voto (-1) lo elimina (toggle)
-    post.vote(user, -1)
+    # 3. Otro usuario (AdminUser) también puede votar sin colisionar
+    post.vote(admin, 1)
     db.session.commit()
-    assert len(post.votes) == 0
+    assert len(post.votes) == 2
     assert post.calculateScore() == 0
+
+    # 4. Repetir mismo voto (-1) lo elimina (toggle)
+    post.vote(student, -1)
+    db.session.commit()
+    assert len(post.votes) == 1
+    assert post.calculateScore() == 1

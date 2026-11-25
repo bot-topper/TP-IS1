@@ -96,9 +96,11 @@ class Post(db.Model):
         #buscar entre la lista de votos
         existing_vote = None
         for v in self.votes:
-            #compara las instancias de python || objetos ya persistentes en la bdd.
+            # Compara instancias en memoria o registros persistidos por tipo e id de usuario.
             if v.user == user or (
-                v.user_id is not None and getattr(user, "id", None) == v.user_id
+                v.user_id is not None
+                and v.user_type == type(user).__name__
+                and getattr(user, "id", None) == v.user_id
             ):
                 existing_vote = v
                 break

@@ -37,9 +37,13 @@ def _default_http_post(
             return json.loads(raw)
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"Error HTTP {exc.code} al consultar el proveedor IA: {detail}") from exc
+        raise RuntimeError(
+            f"Error HTTP {exc.code} al consultar el proveedor IA: {detail}"
+        ) from exc
     except urllib.error.URLError as exc:
-        raise RuntimeError(f"Error de conexión con el proveedor IA: {exc.reason}") from exc
+        raise RuntimeError(
+            f"Error de conexión con el proveedor IA: {exc.reason}"
+        ) from exc
 
 
 def _build_prompt(question: QuestionLike) -> str:
@@ -61,9 +65,7 @@ def _resolve_required_secret(value: str | None, env_var: str) -> str:
     """Obtiene una credencial desde parámetro o variable de entorno sin hardcodearla."""
     resolved = value if value is not None else os.getenv(env_var)
     if not resolved or not resolved.strip():
-        raise ValueError(
-            f"Falta configurar la credencial requerida ({env_var})."
-        )
+        raise ValueError(f"Falta configurar la credencial requerida ({env_var}).")
     return resolved.strip()
 
 
@@ -71,7 +73,9 @@ def _resolve_setting(value: str | None, env_var: str, default: str) -> str:
     """Obtiene un parámetro de configuración desde argumento, entorno o valor por defecto."""
     resolved = value if value is not None else os.getenv(env_var, default)
     if not resolved or not resolved.strip():
-        raise ValueError(f"El parámetro de configuración ({env_var}) no puede estar vacío.")
+        raise ValueError(
+            f"El parámetro de configuración ({env_var}) no puede estar vacío."
+        )
     return resolved.strip()
 
 

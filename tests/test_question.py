@@ -110,7 +110,9 @@ def test_question_calculate_score_and_status_transitions(app) -> None:
     db.session.add_all([author, voter1, voter2, cat])
     db.session.flush()
 
-    question = Question(title="Pytest", body="¿Cómo usar fixtures?", category=cat, author=author)
+    question = Question(
+        title="Pytest", body="¿Cómo usar fixtures?", category=cat, author=author
+    )
     db.session.add(question)
     db.session.commit()
 

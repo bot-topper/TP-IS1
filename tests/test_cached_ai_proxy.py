@@ -71,12 +71,16 @@ def test_cached_ai_proxy_validates_constructor_args() -> None:
         CachedAIProxy(realStrategy=strategy, maxRequestsPerHour=0)
 
 
-def test_cache_hit_avoids_calling_real_strategy_for_identical_and_equivalent_questions() -> None:
+def test_cache_hit_avoids_calling_real_strategy_for_identical_and_equivalent_questions() -> (
+    None
+):
     strategy = _SpyStrategy()
     proxy = CachedAIProxy(realStrategy=strategy, maxRequestsPerHour=5)
     user = _FakeUser(id=1, email="ana@unrc.edu.ar")
 
-    q1 = _FakeQuestion(title="¿Qué es Proxy?", body="Explica el patrón Proxy en Python.")
+    q1 = _FakeQuestion(
+        title="¿Qué es Proxy?", body="Explica el patrón Proxy en Python."
+    )
     q2 = _FakeQuestion(
         title="¿qué es proxy? ",
         body="explica el patrón proxy en python.  ",

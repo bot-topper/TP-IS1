@@ -101,7 +101,9 @@ class Question(Post):
 
     def subscribe(self, user: NormalUser) -> None:
         if user is None or not isinstance(user, NormalUser):
-            raise ValueError("Solo un NormalUser válido puede suscribirse a una pregunta.")
+            raise ValueError(
+                "Solo un NormalUser válido puede suscribirse a una pregunta."
+            )
         if user not in self.subscribers:
             self.subscribers.append(user)
 

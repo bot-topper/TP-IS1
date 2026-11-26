@@ -1,5 +1,4 @@
-"""Pruebas unitarias para la clase abstracta User y las rutas de usuarios.
-"""
+"""Pruebas unitarias para la clase abstracta User y las rutas de usuarios."""
 
 import pytest
 from werkzeug.security import check_password_hash

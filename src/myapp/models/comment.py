@@ -11,21 +11,21 @@ MAX_COMMENT_LENGTH = 300
 class Comment(db.Model):
     __tablename__ = "comment"
 
-    id = db.Column(db.Integer, primary_key = True)
-    body = db.Column(db.Text, nullable = False)
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text, nullable=False)
     createdAt = db.Column(
-        db.DateTime(timezone = True),
-        nullable = False,
+        db.DateTime(timezone=True),
+        nullable=False,
         default=lambda: datetime.now(UTC),
     )
 
-    #claves foraneas
-    #referencia a Post (y a sus hijos que tienen este atributo)
-    post_id = db.Column(db.Integer, ForeignKey("post.id"), nullable = False)
+    # claves foraneas
+    # referencia a Post (y a sus hijos que tienen este atributo)
+    post_id = db.Column(db.Integer, ForeignKey("post.id"), nullable=False)
 
     # Identificación a cualquier subclase concreta de User (NormalUser / AdminUser)
     user_type = db.Column(db.String(50), nullable=False)
-    user_id = db.Column(db.Integer, nullable = True)
+    user_id = db.Column(db.Integer, nullable=True)
 
     def __init__(self, body: str, user, post):
         if user is None or not isinstance(user, User):
@@ -37,7 +37,7 @@ class Comment(db.Model):
             raise ValueError(
                 f"El contenido del Comment no puede ser nulo, vacío ni superar {MAX_COMMENT_LENGTH} caracteres."
             )
-        
+
         normalized_body = body.strip()
         if not normalized_body or len(normalized_body) > MAX_COMMENT_LENGTH:
             raise ValueError(

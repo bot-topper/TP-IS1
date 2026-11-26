@@ -9,7 +9,6 @@ from abc import ABC, abstractmethod
 from typing import Protocol
 
 from myapp.models.notification import Notification
-
 from myapp.models.user import User
 
 

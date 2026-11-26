@@ -7,10 +7,10 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from myapp.services.ai.tag_question_manager import TagQuestionManager
 
 from myapp.services.ai.agent_ia import AgentIA
 from myapp.services.ai.strategies import AnswerIA
+from myapp.services.ai.tag_question_manager import TagQuestionManager
 
 
 @dataclass

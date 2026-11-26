@@ -195,3 +195,28 @@ def test_admin_moderation_commands_and_normal_user_forbidden(app, client) -> Non
         assert question.isHidden is True
         logs = db.session.scalars(db.select(ModerationLog)).all()
         assert len(logs) == 2
+
+
+def test_create_question_with_failing_ai_key_does_not_crash(app, client) -> None:
+    from myapp.services.ai.strategies import AnswerIA
+
+    class _FailingStrategy(AnswerIA):
+        def answer(self, question) -> str:
+            raise RuntimeError("Error HTTP 401: API key inválida")
+
+    app.config["AI_STRATEGY_FACTORY"] = _FailingStrategy
+    _register_and_login(client, "user@unrc.edu.ar", "secret123", "normal")
+
+    resp = client.post(
+        "/questions/new",
+        data={
+            "title": "Pregunta con key inválida",
+            "new_category": "General",
+            "tags": "#ia-help",
+            "body": "El hilo debe publicarse igual.",
+        },
+        follow_redirects=True,
+    )
+    assert resp.status_code == 200
+    assert b"Pregunta con key" in resp.data
+    assert b"Error HTTP 401" in resp.data

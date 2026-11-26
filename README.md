@@ -77,7 +77,7 @@ Luego abre `http://127.0.0.1:5000/` en el navegador.
 
 Rutas Principales
 
-### Web (HTML / Jinja2)
+Web (HTML / Jinja2)
 * `GET /questions/` — Listado de preguntas con filtros por categoría y etiqueta.
 * `GET/POST /questions/new` — Crear pregunta (`QuestionCreator`, con respuesta automática si incluye `#ia-help`).
 * `GET /questions/<id>` — Detalle del hilo, respuestas, votos, comentarios, suscripción y moderación.

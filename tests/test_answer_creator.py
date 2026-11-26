@@ -1,14 +1,14 @@
 """Pruebas unitarias para AnswerCreator"""
 
 import pytest
-from myapp.models.answer import Answer
-from myapp.services.factory.answer_creator import AnswerCreator
 
+from myapp.models.answer import Answer
 from myapp.models.category import Category
 from myapp.models.question import Question
 from myapp.models.user import NormalUser
 from myapp.services.ai.agent_ia import AgentIA
 from myapp.services.ai.strategies import AnswerIA
+from myapp.services.factory.answer_creator import AnswerCreator
 
 
 class _DummyStrategy(AnswerIA):
@@ -23,7 +23,12 @@ def test_answer_creator_crea_respuesta_humana_y_de_ia() -> None:
     student = NormalUser(email="student@unrc.edu.ar", passwordHash="secret123")
     helper = NormalUser(email="helper@unrc.edu.ar", passwordHash="secret123")
     cat = Category(name="Bases de Datos", slug="bdd")
-    question = Question(title="Duda", body="¿Como se aprueba Bases de Datos?", category=cat, author=student)
+    question = Question(
+        title="Duda",
+        body="¿Como se aprueba Bases de Datos?",
+        category=cat,
+        author=student,
+    )
 
     human_answer = creator.createPost(
         data={"body": "Estudiando.", "question": question},

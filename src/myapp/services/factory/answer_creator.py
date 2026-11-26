@@ -3,24 +3,26 @@ from __future__ import annotations
 from typing import Any
 
 from myapp.models.answer import Answer
-from myapp.services.factory.post_creator import PostCreatorAbs
-
 from myapp.models.user import User
 from myapp.services.ai.agent_ia import AgentIA
+from myapp.services.factory.post_creator_abs import PostCreatorAbs
 
 
 class AnswerCreator(PostCreatorAbs):
-
     def createPost(self, data: dict[str, Any], autor: object) -> Answer:
         if autor is None or not isinstance(autor, (User, AgentIA)):
             raise ValueError("El autor de una respuesta debe ser un User o un AgentIA.")
 
         if not isinstance(data, dict):
-            raise TypeError("Los datos de la respuesta deben enviarse en un diccionario.")
+            raise TypeError(
+                "Los datos de la respuesta deben enviarse en un diccionario."
+            )
 
         missing = [field for field in ("body", "question") if field not in data]
         if missing:
-            raise ValueError(f"Faltan campos obligatorios para crear la respuesta: {', '.join(missing)}.")
+            raise ValueError(
+                f"Faltan campos obligatorios para crear la respuesta: {', '.join(missing)}."
+            )
 
         if isinstance(autor, AgentIA):
             strategy = getattr(autor, "strategyIA", None)

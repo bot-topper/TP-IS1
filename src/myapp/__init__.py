@@ -10,6 +10,7 @@ def create_app(config_class=Config):
     db.init_app(app)
 
     from myapp.api.health import health_bp
+    from myapp.api.questions import api_questions_bp
     from myapp.models.notification import Notification
     from myapp.web.auth import auth_bp, get_current_user
     from myapp.web.notifications import notifications_bp
@@ -17,6 +18,7 @@ def create_app(config_class=Config):
     from myapp.web.users import users_bp
 
     app.register_blueprint(health_bp)
+    app.register_blueprint(api_questions_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(questions_bp)

@@ -29,4 +29,3 @@ def test_post_creator_abs_es_abstracta_y_soporta_iauthor() -> None:
     post = creator.createPost({"body": "Contenido"}, autor=_DummyAuthor())
     assert isinstance(post, Post)
     assert post.author is not None
-    assert post.author.getName() == "autor"

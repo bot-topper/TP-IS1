@@ -1,5 +1,4 @@
-"""Clase AgentIA que implementa IAutor y delega la generación de respuestas en una estrategia AnswerIA.
-"""
+"""Clase AgentIA que implementa IAutor y delega la generación de respuestas en una estrategia AnswerIA."""
 
 from typing import Protocol
 

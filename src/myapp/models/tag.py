@@ -4,8 +4,8 @@ from myapp.extensions import db
 class Tag(db.Model):
     __tablename__ = "tag"
 
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(100), nullable = False, unique = True)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
 
     def __init__(self, name: str):
         if name is None or name.strip() == "":

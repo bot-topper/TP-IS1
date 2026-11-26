@@ -61,7 +61,9 @@ class CachedAIProxy(AnswerIA):
     ) -> None:
         if not isinstance(realStrategy, AnswerIA):
             raise TypeError("realStrategy debe implementar la interfaz AnswerIA.")
-        if isinstance(maxRequestsPerHour, bool) or not isinstance(maxRequestsPerHour, int):
+        if isinstance(maxRequestsPerHour, bool) or not isinstance(
+            maxRequestsPerHour, int
+        ):
             raise TypeError("maxRequestsPerHour debe ser un entero.")
         if maxRequestsPerHour <= 0:
             raise ValueError("maxRequestsPerHour debe ser mayor que cero.")
@@ -74,7 +76,9 @@ class CachedAIProxy(AnswerIA):
 
     def _prune_expired_requests(self, user_key: str, now: datetime) -> list[datetime]:
         cutoff = now - timedelta(hours=1)
-        active = [ts for ts in self._request_timestamps.get(user_key, []) if ts > cutoff]
+        active = [
+            ts for ts in self._request_timestamps.get(user_key, []) if ts > cutoff
+        ]
         self._request_timestamps[user_key] = active
         return active
 

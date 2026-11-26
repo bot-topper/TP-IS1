@@ -11,7 +11,9 @@ from myapp.models.user import AdminUser, NormalUser
 
 
 class _DummyQuestion(Post):
-    __mapper_args__: ClassVar[dict[str, str]] = {"polymorphic_identity": "dummy_question"}
+    __mapper_args__: ClassVar[dict[str, str]] = {
+        "polymorphic_identity": "dummy_question"
+    }
 
     def calculateScore(self) -> int:
         return sum(v.value for v in self.votes)

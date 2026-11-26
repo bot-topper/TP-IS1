@@ -36,7 +36,9 @@ def test_answer_ia_is_abstract_interface() -> None:
         AnswerIA()  # type: ignore[abstract]
 
 
-def test_concrete_strategies_implement_answer_ia(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_concrete_strategies_implement_answer_ia(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.setenv("OPENAI_API_KEY", "test-openai-key")
     monkeypatch.setenv("GEMINI_API_KEY", "test-gemini-key")
 
@@ -69,8 +71,7 @@ def test_strategies_configure_via_params_and_hide_credentials_in_repr() -> None:
     openai_strategy = AnswerOpenAI(api_key=openai_secret, model="gpt-4.1-mini")
     gemini_strategy = AnswerGemini(api_key=gemini_secret, model="gemini-2.5-pro")
     local_strategy = LocalModelAnswer(
-        model="mistral",
-        base_url="http://127.0.0.1:11434/api/generate"
+        model="mistral", base_url="http://127.0.0.1:11434/api/generate"
     )
 
     assert openai_strategy.model == "gpt-4.1-mini"
@@ -162,9 +163,7 @@ def test_gemini_strategy_builds_request_and_parses_response() -> None:
         "contents": [
             {
                 "parts": [
-                    {
-                        "text": "Título: Python ABC\nContenido: ¿Cómo definir interfaces?"
-                    }
+                    {"text": "Título: Python ABC\nContenido: ¿Cómo definir interfaces?"}
                 ]
             }
         ]

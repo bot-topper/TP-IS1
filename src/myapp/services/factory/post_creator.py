@@ -8,8 +8,8 @@ from myapp.models.user import IAuthor
 if TYPE_CHECKING:
     from myapp.models.post import Post
 
-#Clase abstracta del Factory
+
+# Clase abstracta del Factory
 class PostCreatorAbs(ABC):
     @abstractmethod
-    def createPost(self, data: dict, author: IAuthor) -> Post:
-        ...
+    def createPost(self, data: dict, author: IAuthor) -> Post: ...

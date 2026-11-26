@@ -8,6 +8,7 @@ from myapp.services.ai.agent_ia import AgentIA
 
 class _FakeQuestion:
     "Post (Question) falso"
+
     def __init__(self, title: str, body: str):
         self.title = title
         self.body = body
@@ -15,6 +16,7 @@ class _FakeQuestion:
 
 class _FakeStrategy:
     "Strategy falso"
+
     def answer(self, question: _FakeQuestion) -> str:
         return f"Respuesta automática sobre: {question.title}"
 

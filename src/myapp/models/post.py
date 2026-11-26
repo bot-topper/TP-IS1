@@ -16,11 +16,11 @@ class Post(db.Model):
     }
 
     id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.Text, nullable = False)
+    body = db.Column(db.Text, nullable=False)
 
     publicationDate = db.Column(
-        db.DateTime(timezone = True),
-        nullable = False,
+        db.DateTime(timezone=True),
+        nullable=False,
         default=lambda: datetime.now(UTC),
     )
 
@@ -28,20 +28,20 @@ class Post(db.Model):
     type = db.Column(db.String(50), nullable=False, default="post")
 
     # Atributo para saber que tipo de autor (User o AgentIA)
-    author_type = db.Column(db.String(50), nullable = False)
-    author_id = db.Column(db.Integer, nullable = True)
+    author_type = db.Column(db.String(50), nullable=False)
+    author_id = db.Column(db.Integer, nullable=True)
 
-    isHidden = db.Column(db.Boolean, nullable = False, default = False)
+    isHidden = db.Column(db.Boolean, nullable=False, default=False)
 
-    #Relacion de composicion (1 a 0..*) entre Post y Vote
+    # Relacion de composicion (1 a 0..*) entre Post y Vote
     votes: Mapped[list["Vote"]] = relationship(
         "Vote",
-        backref="post", #crea automáticamente el atributo .post en la clase Vote
-        cascade="all, delete-orphan", #si se elimina el Post o se quita un voto de `self.votes`, se elimina automáticamente de la BD
-        lazy=True, #carga los votos desde la BD recién cuando se accede a `post.votes`.
+        backref="post",  # crea automáticamente el atributo .post en la clase Vote
+        cascade="all, delete-orphan",  # si se elimina el Post o se quita un voto de `self.votes`, se elimina automáticamente de la BD
+        lazy=True,  # carga los votos desde la BD recién cuando se accede a `post.votes`.
     )
 
-    #Relacion de composicion (1 a 0..*) entre Post y Comment
+    # Relacion de composicion (1 a 0..*) entre Post y Comment
     comments: Mapped[list["Comment"]] = relationship(
         "Comment",
         backref="post",
@@ -58,16 +58,22 @@ class Post(db.Model):
         **kwargs,
     ):
         if type(self) is Post:
-            raise TypeError("Post es una clase abstracta y no puede instanciarse directamente.")
+            raise TypeError(
+                "Post es una clase abstracta y no puede instanciarse directamente."
+            )
 
         if body is None or not isinstance(body, str) or body.strip() == "":
             raise ValueError("El contenido del Post no puede ser nulo ni vacío.")
 
         if author is not None:
             if not callable(getattr(author, "getName", None)):
-                raise TypeError("El autor debe implementar la interfaz IAuthor (getName).")
+                raise TypeError(
+                    "El autor debe implementar la interfaz IAuthor (getName)."
+                )
             resolved_type = author_type or type(author).__name__
-            resolved_id = author_id if author_id is not None else getattr(author, "id", None)
+            resolved_id = (
+                author_id if author_id is not None else getattr(author, "id", None)
+            )
         elif author_type is not None and author_type.strip() != "":
             resolved_type = author_type.strip()
             resolved_id = author_id
@@ -89,14 +95,14 @@ class Post(db.Model):
     def calculateScore(self) -> int:
         raise NotImplementedError("Las subclases deben implementar calculateScore().")
 
-    #funcion para votar y se decide que hacer si el usuario ya votó
+    # funcion para votar y se decide que hacer si el usuario ya votó
     def vote(self, user, value: int):
         if user is None:
             raise ValueError("El usuario debe existir.")
 
         if value not in (1, -1):
             raise ValueError("Valor no permitido.")
-        #buscar entre la lista de votos
+        # buscar entre la lista de votos
         existing_vote = None
         for v in self.votes:
             # Compara instancias en memoria o registros persistidos por tipo e id de usuario.
@@ -108,12 +114,12 @@ class Post(db.Model):
                 existing_vote = v
                 break
 
-        #si no exite un voto
+        # si no exite un voto
         if existing_vote is None:
             v = Vote(value, user, self)
-        #si ya hay un voto, y tiene el mismo valor entonces está quitando el voto
+        # si ya hay un voto, y tiene el mismo valor entonces está quitando el voto
         elif existing_vote.value == value:
             self.votes.remove(existing_vote)
-        #si ya hay un voto pero tiene el valor opuesto, hay que modificarlo
+        # si ya hay un voto pero tiene el valor opuesto, hay que modificarlo
         else:
             existing_vote.value = value

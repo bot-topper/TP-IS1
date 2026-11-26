@@ -16,7 +16,7 @@ class IAuthor(Protocol):
 
 class User(db.Model):
     __abstract__ = True
-    
+
     id = db.Column(db.Integer, primary_key=True)
     passwordHash = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
@@ -42,6 +42,7 @@ class User(db.Model):
 
 event.listen(User, "before_insert", User.validate_user_fields, propagate=True)
 event.listen(User, "before_update", User.validate_user_fields, propagate=True)
+
 
 class _ModerationCommandLike(Protocol):
     def execute(self) -> None: ...

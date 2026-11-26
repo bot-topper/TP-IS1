@@ -12,7 +12,7 @@ def index():
     for subcls in User.__subclasses__():
         if not getattr(subcls, "__abstract__", False):
             users.extend(db.session.scalars(db.select(subcls)).all())
-    return render_template("users/index.html", users=users) 
+    return render_template("users/index.html", users=users)
 
 
 @users_bp.get("/<int:user_id>")

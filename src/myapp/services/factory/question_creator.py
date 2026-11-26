@@ -1,7 +1,7 @@
 from myapp.models.category import Category
 from myapp.models.question import Question
 from myapp.models.user import IAuthor, User
-from myapp.services.factory.post_creator import PostCreatorAbs
+from myapp.services.factory.post_creator_abs import PostCreatorAbs
 
 REQUIRED_FIELDS = ("title", "body", "category")
 

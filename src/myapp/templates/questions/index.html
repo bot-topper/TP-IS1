@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}/qa/ - Hilos{% endblock %}
+
+{% block content %}
+  <div class="filter-bar">
+    <form method="get" action="{{ url_for('questions.index') }}" class="filter-form">
+      <label>
+        Categoría:
+        <select name="category">
+          <option value="">Todas</option>
+          {% for cat in categories %}
+            <option value="{{ cat.slug }}" {% if selected_category == cat.slug %}selected{% endif %}>
+              {{ cat.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>
+        Tag:
+        <select name="tag">
+          <option value="">Todos</option>
+          {% for tag in tags %}
+            <option value="{{ tag.name }}" {% if selected_tag == tag.name %}selected{% endif %}>
+              #{{ tag.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <button type="submit">Filtrar</button>
+      {% if selected_category or selected_tag %}
+        [ <a href="{{ url_for('questions.index') }}">Limpiar</a> ]
+      {% endif %}
+    </form>
+
+    <div>
+      [ <a href="{{ url_for('questions.create') }}"><strong>Iniciar nuevo hilo</strong></a> ]
+    </div>
+  </div>
+
+  {% if questions %}
+    {% for q in questions %}
+      <article class="post-box {% if q.isHidden %}hidden-post{% endif %}">
+        <div class="post-header">
+          <span class="subject">{{ q.title }}</span>
+          <span class="poster-name">{{ author_label(q) }}</span>
+          <span class="post-meta">No.{{ q.id }}</span>
+          <span class="badge badge-{{ q.status.value|lower }}">{{ q.status.value }}</span>
+          <span class="badge">{{ q.category.name }}</span>
+          {% if q.isHidden %}
+            <span class="badge badge-closed">OCULTO</span>
+          {% endif %}
+        </div>
+
+        <div class="post-body">{{ q.body }}</div>
+
+        <div>
+          {% for tag in q.tags %}
+            <a class="tag-chip" href="{{ url_for('questions.index', tag=tag.name) }}">&gt;#{{ tag.name }}</a>
+          {% endfor %}
+        </div>
+
+        <div class="post-actions">
+          <span>Puntaje: <strong>{{ q.calculateScore() }}</strong></span>
+          <span>Respuestas: <strong>{{ q.answers|length }}</strong></span>
+          [ <a href="{{ url_for('questions.detail', question_id=q.id) }}">Abrir hilo</a> ]
+        </div>
+      </article>
+    {% endfor %}
+  {% else %}
+    <div class="post-box">
+      No hay hilos que coincidan con el filtro actual.
+      [ <a href="{{ url_for('questions.create') }}">Crear la primera pregunta</a> ]
+    </div>
+  {% endif %}
+{% endblock %}

@@ -475,3 +475,87 @@ def moderate_hide(post_id: int):
     flash("Visibilidad del post actualizada.")
     question_id = post.question_id if isinstance(post, Answer) else post.id
     return redirect(url_for("questions.detail", question_id=question_id))
+
+
+def _can_manage_question(question: Question, user: User | None) -> bool:
+    return _is_question_author(question, user) or isinstance(user, AdminUser)
+
+
+@questions_bp.route("/questions/<int:question_id>/edit", methods=["GET", "POST"])
+def edit(question_id: int):
+    user = _require_user()
+    if user is None:
+        return redirect(url_for("auth.login"))
+
+    question = db.session.get(Question, question_id)
+    if question is None:
+        abort(404)
+
+    if not _can_manage_question(question, user):
+        abort(403)
+
+    categories = db.session.scalars(db.select(Category).order_by(Category.name)).all()
+
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        body = request.form.get("body", "").strip()
+        category_id = request.form.get("category_id", "").strip()
+        raw_tags = request.form.get("tags")
+
+        if not title:
+            return (
+                render_template(
+                    "questions/edit.html",
+                    question=question,
+                    categories=categories,
+                    error="El título de la pregunta no puede estar vacío.",
+                ),
+                400,
+            )
+        if not body:
+            return (
+                render_template(
+                    "questions/edit.html",
+                    question=question,
+                    categories=categories,
+                    error="El cuerpo de la pregunta no puede estar vacío.",
+                ),
+                400,
+            )
+
+        if category_id.isdigit():
+            category = db.session.get(Category, int(category_id))
+            if category is not None:
+                question.category = category
+
+        question.title = title
+        question.body = body
+        if raw_tags is not None:
+            question.tags.clear()
+            for tag in _parse_tags(raw_tags):
+                question.add_tag(tag)
+
+        db.session.commit()
+        flash("Hilo actualizado.")
+        return redirect(url_for("questions.detail", question_id=question.id))
+
+    return render_template("questions/edit.html", question=question, categories=categories)
+
+
+@questions_bp.post("/questions/<int:question_id>/delete")
+def delete(question_id: int):
+    user = _require_user()
+    if user is None:
+        return redirect(url_for("auth.login"))
+
+    question = db.session.get(Question, question_id)
+    if question is None:
+        abort(404)
+
+    if not _can_manage_question(question, user):
+        abort(403)
+
+    db.session.delete(question)
+    db.session.commit()
+    flash("Hilo eliminado.")
+    return redirect(url_for("questions.index"))

@@ -47,3 +47,57 @@ El sistema permite a los usuarios publicar consultas organizadas por categorías
 | **Integrante 5** - *Santino Gatti Raggi* | [@GoblinCrimes](https://github.com/GoblinCrimes) | 47.988.332 |
 
 ---
+
+Instalación y Ejecución
+
+1. Requisitos e instalación de dependencias
+```bash
+uv sync
+```
+
+2. Variables de entorno
+Copia `.env.example` a `.env` y provee una key si deseas usar un proveedor LLM externo (OpenAI o Gemini):
+```bash
+cp .env.example .env
+```
+
+3. Base de datos y migraciones
+Aplica las migraciones de Alembic:
+```bash
+uv run alembic upgrade head
+```
+
+4. Levantar servidor de desarrollo
+```bash
+uv run flask --app myapp run --debug
+```
+Luego abre `http://127.0.0.1:5000/` en el navegador.
+
+---
+
+Rutas Principales
+
+### Web (HTML / Jinja2)
+* `GET /questions/` — Listado de preguntas con filtros por categoría y etiqueta.
+* `GET/POST /questions/new` — Crear pregunta (`QuestionCreator`, con respuesta automática si incluye `#ia-help`).
+* `GET /questions/<id>` — Detalle del hilo, respuestas, votos, comentarios, suscripción y moderación.
+* `GET/POST /questions/<id>/edit`, `POST /questions/<id>/delete` — Editar o eliminar pregunta (autor o `AdminUser`).
+* `GET/POST /auth/register`, `GET/POST /auth/login`, `POST /auth/logout` — Registro e inicio de sesión.
+* `GET /notifications/` — Notificaciones del usuario autenticado.
+
+API REST (JSON)
+* `GET /health` — Estado de la aplicación.
+* `GET /api/questions` — Listado JSON (soporta `?category=` y `?tag=`).
+* `GET /api/questions/<id>` — Detalle JSON de una pregunta y sus respuestas.
+* `POST /api/questions` — Crear pregunta vía JSON (requiere sesión).
+* `PATCH /api/questions/<id>`, `DELETE /api/questions/<id>` — Actualizar o eliminar pregunta vía JSON.
+* `POST /api/questions/<id>/answers` — Crear respuesta vía JSON (requiere sesión).
+
+---
+
+Lint y Pruebas
+```bash
+uv run ruff check .
+uv run pytest -v
+```
+

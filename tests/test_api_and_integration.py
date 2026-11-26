@@ -135,3 +135,51 @@ def test_end_to_end_integration_flow_api_ia_notifications_and_moderation(app, cl
         logs = db.session.scalars(db.select(ModerationLog)).all()
         assert len(logs) == 1
         assert logs[0].reason == "Resuelta y archivada"
+
+
+def test_question_edit_and_delete_crud_web_and_api(app, client) -> None:
+    _register(client, "autor@unrc.edu.ar", "secret123", "normal")
+    create_resp = client.post(
+        "/api/questions",
+        json={
+            "title": "Título inicial",
+            "body": "Cuerpo inicial",
+            "category": "General",
+            "tags": ["inicial"],
+        },
+    )
+    q_id = create_resp.get_json()["id"]
+
+    # Otro usuario normal no puede editar ni eliminar (403)
+    client.post("/auth/logout")
+    _register(client, "otro@unrc.edu.ar", "secret123", "normal")
+    assert client.get(f"/questions/{q_id}/edit").status_code == 403
+    assert client.post(f"/questions/{q_id}/delete").status_code == 403
+    assert client.patch(f"/api/questions/{q_id}", json={"title": "Hack"}).status_code == 403
+    assert client.delete(f"/api/questions/{q_id}").status_code == 403
+
+    # Autor edita por Web y por API
+    client.post("/auth/logout")
+    client.post("/auth/login", data={"email": "autor@unrc.edu.ar", "password": "secret123"})
+
+    web_edit = client.post(
+        f"/questions/{q_id}/edit",
+        data={"title": "Título editado", "body": "Cuerpo editado", "tags": "nuevo"},
+        follow_redirects=True,
+    )
+    assert web_edit.status_code == 200
+    assert b"T\xc3\xadtulo editado" in web_edit.data
+
+    api_patch = client.patch(
+        f"/api/questions/{q_id}",
+        json={"title": "Título final API"},
+    )
+    assert api_patch.status_code == 200
+    assert api_patch.get_json()["title"] == "Título final API"
+
+    # Autor elimina por API (y Web delete también funciona)
+    api_del = client.delete(f"/api/questions/{q_id}")
+    assert api_del.status_code == 200
+    assert api_del.get_json() == {"deleted": True, "id": q_id}
+    assert client.get(f"/api/questions/{q_id}").status_code == 404
+

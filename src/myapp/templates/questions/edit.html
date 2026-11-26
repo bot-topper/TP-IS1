@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}/qa/ - Editar hilo{% endblock %}
+
+{% block content %}
+  <h2>Editar hilo No.{{ question.id }}</h2>
+
+  {% if error %}
+    <p class="error">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" class="board-form">
+    <label>
+      Asunto / Título
+      <input type="text" name="title" value="{{ question.title }}" required>
+    </label>
+
+    <label>
+      Categoría
+      <select name="category_id">
+        {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if cat.id == question.category_id %}selected{% endif %}>
+            {{ cat.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>
+      Etiquetas (separadas por coma)
+      <input type="text" name="tags" value="{{ question.tags | map(attribute='name') | join(', ') }}">
+    </label>
+
+    <label>
+      Cuerpo de la pregunta
+      <textarea name="body" rows="5" required>{{ question.body }}</textarea>
+    </label>
+
+    <div>
+      <button type="submit">Guardar cambios</button>
+      [ <a href="{{ url_for('questions.detail', question_id=question.id) }}">Cancelar</a> ]
+    </div>
+  </form>
+{% endblock %}

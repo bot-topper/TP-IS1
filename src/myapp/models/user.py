@@ -2,7 +2,7 @@ import re
 from typing import Protocol
 
 from sqlalchemy import event
-from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from myapp.extensions import db
 
@@ -35,6 +35,11 @@ class User(db.Model):
 
     def getName(self) -> str:
         return self.email
+
+    def checkPassword(self, password: str) -> bool:
+        if not password or not self.passwordHash:
+            return False
+        return check_password_hash(self.passwordHash, password)
 
     def updateReputation(self, points: int) -> None:
         self.reputation += points

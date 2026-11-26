@@ -120,7 +120,10 @@ def create_question():
             agent_ia=_build_ai_agent(),
             answer_creator=AnswerCreator(),
         )
-        manager.checkLabelQuestion(question)
+        try:
+            manager.checkLabelQuestion(question)
+        except RuntimeError:
+            pass
     except (ValueError, TypeError) as exc:
         db.session.rollback()
         return {"error": str(exc)}, 400

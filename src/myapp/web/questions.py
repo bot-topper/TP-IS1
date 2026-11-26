@@ -234,7 +234,11 @@ def create():
                 agent_ia=_build_ai_agent(),
                 answer_creator=AnswerCreator(),
             )
-            manager.checkLabelQuestion(question)
+            try:
+                manager.checkLabelQuestion(question)
+            except RuntimeError as exc:
+                flash(f"Hilo publicado, pero falló la respuesta automática IA: {exc}")
+                return redirect(url_for("questions.detail", question_id=question.id))
 
             flash("Hilo publicado correctamente.")
             return redirect(url_for("questions.detail", question_id=question.id))

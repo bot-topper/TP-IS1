@@ -10,6 +10,7 @@ from myapp.services.notifications.mediator import QANotificationMediator
 from myapp.web.questions import (
     _author_label,
     _build_ai_agent,
+    _can_manage_question,
     _get_or_create_category,
     _notify_and_persist,
     _parse_tags,
@@ -155,3 +156,54 @@ def create_answer(question_id: int):
         return {"error": str(exc)}, 400
 
     return _serialize_answer(answer), 201
+
+
+@api_questions_bp.patch("/<int:question_id>")
+def update_question(question_id: int):
+    user = getattr(g, "current_user", None)
+    if user is None:
+        return {"error": "Autenticación requerida."}, 401
+
+    question = db.session.get(Question, question_id)
+    if question is None:
+        return {"error": "Pregunta no encontrada."}, 404
+
+    if not _can_manage_question(question, user):
+        return {"error": "No tienes permisos para editar esta pregunta."}, 403
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return {"error": "Se requiere un cuerpo JSON válido."}, 400
+
+    if "title" in payload:
+        title = payload["title"]
+        if not isinstance(title, str) or not title.strip():
+            return {"error": "El título no puede estar vacío."}, 400
+        question.title = title.strip()
+
+    if "body" in payload:
+        body = payload["body"]
+        if not isinstance(body, str) or not body.strip():
+            return {"error": "El cuerpo no puede estar vacío."}, 400
+        question.body = body.strip()
+
+    db.session.commit()
+    return _serialize_question(question, include_answers=True)
+
+
+@api_questions_bp.delete("/<int:question_id>")
+def delete_question(question_id: int):
+    user = getattr(g, "current_user", None)
+    if user is None:
+        return {"error": "Autenticación requerida."}, 401
+
+    question = db.session.get(Question, question_id)
+    if question is None:
+        return {"error": "Pregunta no encontrada."}, 404
+
+    if not _can_manage_question(question, user):
+        return {"error": "No tienes permisos para eliminar esta pregunta."}, 403
+
+    db.session.delete(question)
+    db.session.commit()
+    return {"deleted": True, "id": question_id}

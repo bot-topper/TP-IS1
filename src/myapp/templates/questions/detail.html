@@ -46,6 +46,18 @@
             </button>
           </form>
         {% endif %}
+        {% if is_author or current_user_role == "AdminUser" %}
+          [ <a href="{{ url_for('questions.edit', question_id=question.id) }}">Editar</a> ]
+          <form method="post" action="{{ url_for('questions.delete', question_id=question.id) }}" class="inline-form">
+            <button type="submit" class="link-btn">[Eliminar]</button>
+          </form>
+        {% endif %}
+        {% if is_author or current_user_role == "AdminUser" %}
+          [ <a href="{{ url_for('questions.edit', question_id=question.id) }}">Editar</a> ]
+          <form method="post" action="{{ url_for('questions.delete', question_id=question.id) }}" class="inline-form">
+            <button type="submit" class="link-btn">[Eliminar]</button>
+          </form>
+        {% endif %}
         {% if current_user_role == "AdminUser" %}
           <form method="post" action="{{ url_for('questions.moderate_close', question_id=question.id) }}" class="inline-form">
             <button type="submit" class="link-btn">[Cerrar hilo]</button>
@@ -115,7 +127,13 @@
               <button type="submit" class="link-btn">[Aceptar respuesta]</button>
             </form>
           {% endif %}
-          {% if current_user_role == "AdminUser" %}
+          {% if is_author or current_user_role == "AdminUser" %}
+          [ <a href="{{ url_for('questions.edit', question_id=question.id) }}">Editar</a> ]
+          <form method="post" action="{{ url_for('questions.delete', question_id=question.id) }}" class="inline-form">
+            <button type="submit" class="link-btn">[Eliminar]</button>
+          </form>
+        {% endif %}
+        {% if current_user_role == "AdminUser" %}
             <form method="post" action="{{ url_for('questions.moderate_hide', post_id=ans.id) }}" class="inline-form">
               <button type="submit" class="link-btn">[Ocultar/Mostrar]</button>
             </form>

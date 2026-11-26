@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}/qa/ - Notificaciones{% endblock %}
+
+{% block content %}
+  <h2>Mis notificaciones</h2>
+
+  {% if notifications %}
+    {% for notif in notifications %}
+      <div class="post-box {% if notif.isRead %}hidden-post{% endif %}">
+        <div class="post-header">
+          <span class="badge {% if not notif.isRead %}badge-open{% endif %}">
+            {% if notif.isRead %}LEÍDA{% else %}NUEVA{% endif %}
+          </span>
+          <span>{{ notif.message }}</span>
+        </div>
+        {% if not notif.isRead %}
+          <form method="post" action="{{ url_for('notifications.mark_read', notification_id=notif.id) }}">
+            <button type="submit" class="link-btn">[Marcar como leída]</button>
+          </form>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="post-box">No tienes notificaciones por el momento.</div>
+  {% endif %}
+{% endblock %}

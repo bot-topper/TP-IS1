@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}/qa/ - {{ question.title }}{% endblock %}
+
+{% block content %}
+  <p>[ <a href="{{ url_for('questions.index') }}">Volver al tablón</a> ]</p>
+
+  <article class="op-post {% if question.isHidden %}hidden-post{% endif %}">
+    <div class="post-header">
+      <span class="subject">{{ question.title }}</span>
+      <span class="poster-name">{{ author_label(question) }}</span>
+      <span class="post-meta">No.{{ question.id }}</span>
+      <span class="badge badge-{{ question.status.value|lower }}">{{ question.status.value }}</span>
+      <span class="badge">{{ question.category.name }}</span>
+      {% if question.isHidden %}
+        <span class="badge badge-closed">OCULTO</span>
+      {% endif %}
+    </div>
+
+    <div class="post-body">{{ question.body }}</div>
+
+    <div>
+      {% for tag in question.tags %}
+        <a class="tag-chip" href="{{ url_for('questions.index', tag=tag.name) }}">&gt;#{{ tag.name }}</a>
+      {% endfor %}
+    </div>
+
+    <div class="post-actions">
+      <span>Puntaje: <strong>{{ question.calculateScore() }}</strong></span>
+      {% if current_user %}
+        <form method="post" action="{{ url_for('questions.vote_post', post_id=question.id) }}" class="inline-form">
+          <input type="hidden" name="value" value="1">
+          <button type="submit" class="link-btn">[+1]</button>
+        </form>
+        <form method="post" action="{{ url_for('questions.vote_post', post_id=question.id) }}" class="inline-form">
+          <input type="hidden" name="value" value="-1">
+          <button type="submit" class="link-btn">[-1]</button>
+        </form>
+        <form method="post" action="{{ url_for('questions.generate_ai_answer', question_id=question.id) }}" class="inline-form">
+          <button type="submit" class="link-btn">[Solicitar IA]</button>
+        </form>
+        {% if current_user_role == "NormalUser" %}
+          <form method="post" action="{{ url_for('questions.toggle_subscribe', question_id=question.id) }}" class="inline-form">
+            <button type="submit" class="link-btn">
+              {% if is_subscribed %}[Desuscribirse]{% else %}[Suscribirse]{% endif %}
+            </button>
+          </form>
+        {% endif %}
+        {% if current_user_role == "AdminUser" %}
+          <form method="post" action="{{ url_for('questions.moderate_close', question_id=question.id) }}" class="inline-form">
+            <button type="submit" class="link-btn">[Cerrar hilo]</button>
+          </form>
+          <form method="post" action="{{ url_for('questions.moderate_hide', post_id=question.id) }}" class="inline-form">
+            <button type="submit" class="link-btn">[Ocultar/Mostrar]</button>
+          </form>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    {% if question.comments %}
+      <div class="comments-list">
+        {% for c in question.comments %}
+          <div class="comment-item">
+            &gt;&gt; <strong>{{ c.user_type }}</strong>: {{ c.body }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if current_user %}
+      <form method="post" action="{{ url_for('questions.add_comment', post_id=question.id) }}" class="post-actions">
+        <input type="text" name="body" placeholder="Agregar comentario corto..." required>
+        <button type="submit">Comentar</button>
+      </form>
+    {% endif %}
+  </article>
+
+  <hr class="board-hr">
+  <h3>Respuestas ({{ question.answers|length }})</h3>
+
+  {% for ans in question.answers %}
+    <article class="post-box {% if ans.acceptedAnswer %}accepted-post{% endif %} {% if ans.isHidden %}hidden-post{% endif %}">
+      <div class="post-header">
+        <span>&gt;&gt;</span>
+        <span class="{% if ans.isAIGenerated %}poster-ai{% else %}poster-name{% endif %}">
+          {{ author_label(ans) }}
+        </span>
+        <span class="post-meta">No.{{ ans.id }}</span>
+        {% if ans.acceptedAnswer %}
+          <span class="badge badge-accepted">ACEPTADA</span>
+        {% endif %}
+        {% if ans.isAIGenerated %}
+          <span class="badge badge-ai">IA: {{ ans.modelUsed }} ({{ ans.triggerType }})</span>
+        {% endif %}
+        {% if ans.isHidden %}
+          <span class="badge badge-closed">OCULTO</span>
+        {% endif %}
+      </div>
+
+      <div class="post-body">{{ ans.body }}</div>
+
+      <div class="post-actions">
+        <span>Puntaje: <strong>{{ ans.calculateScore() }}</strong></span>
+        {% if current_user %}
+          <form method="post" action="{{ url_for('questions.vote_post', post_id=ans.id) }}" class="inline-form">
+            <input type="hidden" name="value" value="1">
+            <button type="submit" class="link-btn">[+1]</button>
+          </form>
+          <form method="post" action="{{ url_for('questions.vote_post', post_id=ans.id) }}" class="inline-form">
+            <input type="hidden" name="value" value="-1">
+            <button type="submit" class="link-btn">[-1]</button>
+          </form>
+          {% if is_author and not ans.acceptedAnswer %}
+            <form method="post" action="{{ url_for('questions.accept_answer', answer_id=ans.id) }}" class="inline-form">
+              <button type="submit" class="link-btn">[Aceptar respuesta]</button>
+            </form>
+          {% endif %}
+          {% if current_user_role == "AdminUser" %}
+            <form method="post" action="{{ url_for('questions.moderate_hide', post_id=ans.id) }}" class="inline-form">
+              <button type="submit" class="link-btn">[Ocultar/Mostrar]</button>
+            </form>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      {% if ans.comments %}
+        <div class="comments-list">
+          {% for c in ans.comments %}
+            <div class="comment-item">
+              &gt;&gt; <strong>{{ c.user_type }}</strong>: {{ c.body }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if current_user %}
+        <form method="post" action="{{ url_for('questions.add_comment', post_id=ans.id) }}" class="post-actions">
+          <input type="text" name="body" placeholder="Comentar esta respuesta..." required>
+          <button type="submit">Comentar</button>
+        </form>
+      {% endif %}
+    </article>
+  {% else %}
+    <div class="post-box">Todavía no hay respuestas en este hilo.</div>
+  {% endfor %}
+
+  {% if current_user %}
+    <hr class="board-hr">
+    <h3>Responder al hilo</h3>
+    <form method="post" action="{{ url_for('questions.add_answer', question_id=question.id) }}" class="board-form">
+      <label>
+        Tu respuesta
+        <textarea name="body" rows="4" required></textarea>
+      </label>
+      <button type="submit">Enviar respuesta</button>
+    </form>
+  {% endif %}
+{% endblock %}

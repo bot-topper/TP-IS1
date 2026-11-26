@@ -1,32 +1,52 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}My App{% endblock %}</title>
+  <title>{% block title %}/qa/ - Foro Universitario{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 </head>
 <body>
-  <header>
-    <nav class="navbar">
-      <a href="{{ url_for('users.index') }}">Users</a>
-      {% if current_user %}
-        <span class="nav-user">{{ current_user.email }} ({{ current_user_role }})</span>
-        <form method="post" action="{{ url_for('auth.logout') }}" class="inline-form">
-          <button type="submit">Cerrar sesión</button>
-        </form>
-      {% else %}
-        <a href="{{ url_for('auth.login') }}">Iniciar sesión</a>
-        <a href="{{ url_for('auth.register') }}">Registrarse</a>
-      {% endif %}
+  <header class="board-header">
+    <nav class="board-nav">
+      <span class="board-links">
+        [ <a href="{{ url_for('questions.index') }}">/qa/ Foro</a> ]
+        [ <a href="{{ url_for('questions.create') }}">Nuevo Hilo</a> ]
+        [ <a href="{{ url_for('users.index') }}">Users</a> ]
+        {% if current_user %}
+          [ <a href="{{ url_for('notifications.index') }}">Notificaciones ({{ unread_notifications_count }})</a> ]
+        {% endif %}
+      </span>
+      <span class="auth-links">
+        {% if current_user %}
+          <span class="nav-user">{{ current_user.email }} ({{ current_user_role }})</span>
+          <form method="post" action="{{ url_for('auth.logout') }}" class="inline-form">
+            <button type="submit" class="link-btn">[Cerrar sesión]</button>
+          </form>
+        {% else %}
+          [ <a href="{{ url_for('auth.login') }}">Iniciar sesión</a> ]
+          [ <a href="{{ url_for('auth.register') }}">Registrarse</a> ]
+        {% endif %}
+      </span>
     </nav>
+    <div class="board-banner">
+      <div class="board-title">/qa/ - Plataforma Colaborativa Q&amp;A</div>
+      <div class="board-subtitle">Preguntas, Respuestas, Patrones &amp; Agente IA</div>
+    </div>
+    <hr class="board-hr">
   </header>
-  <main>
+
+  <main class="board-main">
     {% for message in get_flashed_messages() %}
-      <p class="flash">{{ message }}</p>
+      <div class="flash-box">{{ message }}</div>
     {% endfor %}
     {% block content %}{% endblock %}
   </main>
+
+  <footer class="board-footer">
+    <hr class="board-hr">
+    <span>- /qa/ IS1 Taller -</span>
+  </footer>
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

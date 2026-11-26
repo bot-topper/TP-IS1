@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}/qa/ - Nuevo Hilo{% endblock %}
+
+{% block content %}
+  <h2>Abrir nuevo hilo</h2>
+
+  {% if error %}
+    <p class="error">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" class="board-form">
+    <label>
+      Asunto / Título
+      <input type="text" name="title" placeholder="Ej: ¿Cómo funciona el patrón Strategy?" required>
+    </label>
+
+    <label>
+      Categoría existente
+      <select name="category_id">
+        <option value="">-- Seleccionar --</option>
+        {% for cat in categories %}
+          <option value="{{ cat.id }}">{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>
+      O crear nueva categoría
+      <input type="text" name="new_category" placeholder="Ej: Patrones de Diseño">
+    </label>
+
+    <label>
+      Etiquetas (separadas por coma, usa #ia-help para respuesta automática IA)
+      <input type="text" name="tags" placeholder="python, #ia-help">
+    </label>
+
+    <label>
+      Cuerpo de la pregunta
+      <textarea name="body" rows="5" required></textarea>
+    </label>
+
+    <div>
+      <button type="submit">Publicar hilo</button>
+      [ <a href="{{ url_for('questions.index') }}">Cancelar</a> ]
+    </div>
+  </form>
+{% endblock %}

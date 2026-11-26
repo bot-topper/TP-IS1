@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Registro{% endblock %}
+
+{% block content %}
+  <h1>Registro</h1>
+
+  {% if error %}
+    <p class="error">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" class="auth-form">
+    <label>
+      Email
+      <input type="email" name="email" required>
+    </label>
+
+    <label>
+      Contraseña
+      <input type="password" name="password" required>
+    </label>
+
+    <label>
+      Rol
+      <select name="role">
+        <option value="normal" selected>NormalUser</option>
+        <option value="admin">AdminUser</option>
+      </select>
+    </label>
+
+    <button type="submit">Registrarse</button>
+  </form>
+{% endblock %}

@@ -8,11 +8,23 @@
 </head>
 <body>
   <header>
-    <nav>
+    <nav class="navbar">
       <a href="{{ url_for('users.index') }}">Users</a>
+      {% if current_user %}
+        <span class="nav-user">{{ current_user.email }} ({{ current_user_role }})</span>
+        <form method="post" action="{{ url_for('auth.logout') }}" class="inline-form">
+          <button type="submit">Cerrar sesión</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Iniciar sesión</a>
+        <a href="{{ url_for('auth.register') }}">Registrarse</a>
+      {% endif %}
     </nav>
   </header>
   <main>
+    {% for message in get_flashed_messages() %}
+      <p class="flash">{{ message }}</p>
+    {% endfor %}
     {% block content %}{% endblock %}
   </main>
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>

@@ -1,11 +1,15 @@
+from pathlib import Path
+
 from flask import Flask, g
 
 from myapp.config import Config
 from myapp.extensions import db
 
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
 
 def create_app(config_class=Config):
-    app = Flask(__name__)
+    app = Flask(__name__, instance_path=str(_PROJECT_ROOT))
     app.config.from_object(config_class)
     db.init_app(app)
 

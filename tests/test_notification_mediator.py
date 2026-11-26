@@ -6,15 +6,15 @@ Colocar en: tests/
 from dataclasses import dataclass, field
 
 import pytest
-from myapp.services.notifications.mediator import (
-    NotificationMediator,
-    QANotificationMediator,
-)
 
 from myapp.extensions import db
 from myapp.models.user import AdminUser, NormalUser
 from myapp.services.ai.agent_ia import AgentIA
 from myapp.services.ai.strategies import AnswerIA
+from myapp.services.notifications.mediator import (
+    NotificationMediator,
+    QANotificationMediator,
+)
 
 
 class _DummyStrategy(AnswerIA):
